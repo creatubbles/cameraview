@@ -17,11 +17,9 @@
 package com.google.android.cameraview;
 
 import android.annotation.SuppressLint;
-import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.os.Build;
 import android.support.v4.util.SparseArrayCompat;
-import android.view.SurfaceHolder;
 
 import java.io.IOException;
 import java.util.List;
@@ -105,17 +103,12 @@ class Camera1 extends CameraViewImpl {
     @SuppressLint("NewApi")
     void setUpPreview() {
         try {
-            if (mPreview.getOutputClass() == SurfaceHolder.class) {
-                final boolean needsToStopPreview = mShowingPreview && Build.VERSION.SDK_INT < 14;
-                if (needsToStopPreview) {
-                    mCamera.stopPreview();
-                }
-                mCamera.setPreviewDisplay(mPreview.getSurfaceHolder());
-                if (needsToStopPreview) {
-                    mCamera.startPreview();
-                }
-            } else {
-                mCamera.setPreviewTexture((SurfaceTexture) mPreview.getSurfaceTexture());
+            if (mShowingPreview) {
+                mCamera.stopPreview();
+            }
+            mCamera.setPreviewDisplay(mPreview.getSurfaceHolder());
+            if (mShowingPreview) {
+                mCamera.startPreview();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
